@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Resources\JobPostResource;
 use App\Http\Resources\UserInfoResource;
 use App\Models\Category;
+use App\Models\JobApplication;
 use App\Models\JobPost;
 use App\Models\JobType;
 use App\Models\User;
@@ -134,12 +135,17 @@ class HomeController extends Controller
     public function show($slug)
     {
         $jobs = JobPostResource::collection(JobPost::where('status', 1)->where('slug', $slug)->with('JobApplication')->get());
+        $users = JobApplication::where('job_post_id',$jobs[0]->id)->with('user')->get();
+        foreach ($users as $user) {
+            $user->applied_date = Carbon::parse($user->applied_date)->format('d M, Y');
+        }
         return Inertia::render('Front/JobDetails', [
             'canLogin' => Route::has('login'),
             'canRegister' => Route::has('register'),
             'laravelVersion' => Application::VERSION,
             'phpVersion' => PHP_VERSION,
             'jobs' => $jobs,
+            'users' => $users,
         ]);
     }
 

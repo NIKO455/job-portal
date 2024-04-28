@@ -6,6 +6,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import PrimaryButtonOutline from "@/Components/PrimaryButtonOutline.vue";
 
 defineProps({
+    users: Object,
     jobs: Object
 })
 
@@ -35,90 +36,131 @@ defineProps({
             <div class="container job_details_area">
                 <div class="row pb-5">
                     <div class="col-md-8">
-                        <div class="card shadow border-0">
-                            <div class="job_details_header">
-                                <div class="single_jobs white-bg d-flex justify-content-between">
-                                    <div class="jobs_left d-flex align-items-center">
+                        <div class="col-md-12">
+                            <div class="card shadow border-0">
+                                <div class="job_details_header">
+                                    <div class="single_jobs white-bg d-flex justify-content-between">
+                                        <div class="jobs_left d-flex align-items-center">
 
-                                        <div class="jobs_conetent">
-                                            <a href="#">
-                                                <h4>{{ jobs[0].title }}</h4>
-                                            </a>
-                                            <div class="links_locat d-flex align-items-center">
-                                                <div class="location">
-                                                    <p><i class="fa fa-map-marker"></i> {{ jobs[0].location }}</p>
-                                                </div>
+                                            <div class="jobs_conetent">
+                                                <a href="#">
+                                                    <h4>{{ jobs[0].title }}</h4>
+                                                </a>
+                                                <div class="links_locat d-flex align-items-center">
+                                                    <div class="location">
+                                                        <p><i class="fa fa-map-marker"></i> {{ jobs[0].location }}</p>
+                                                    </div>
 
-                                                <div class="location">
-                                                    <p style="text-transform: capitalize;"><i class="fa fa-clock-o"></i>
-                                                        {{ jobs[0].job_type_id.name }}</p>
+                                                    <div class="location">
+                                                        <p style="text-transform: capitalize;"><i
+                                                            class="fa fa-clock-o"></i>
+                                                            {{ jobs[0].job_type_id.name }}</p>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="jobs_right" v-if="jobs[0].saved_post">
-                                        <div class="apply_now saved-heart">
-                                            <a class="heart_mark"> <i class="fa fa-heart-o"
-                                                                               aria-hidden="true"></i></a>
+                                        <div class="jobs_right" v-if="jobs[0].saved_post">
+                                            <div class="apply_now saved-heart">
+                                                <a class="heart_mark"> <i class="fa fa-heart-o"
+                                                                          aria-hidden="true"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="jobs_right" v-else>
+                                            <div class="apply_now">
+                                                <a class="heart_mark"> <i class="fa fa-heart-o"
+                                                                          aria-hidden="true"></i></a>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="jobs_right" v-else>
-                                        <div class="apply_now">
-                                            <a class="heart_mark"> <i class="fa fa-heart-o"
-                                                                               aria-hidden="true"></i></a>
-                                        </div>
+                                </div>
+                                <div class="descript_wrap white-bg">
+                                    <div class="single_wrap">
+                                        <h4>Job description</h4>
+                                        <p>{{ jobs[0].description }}</p>
+                                    </div>
+                                    <div class="single_wrap" v-if="jobs[0].responsibility">
+                                        <h4>Responsibility</h4>
+                                        <p>{{ jobs[0].responsibility }}</p>
+                                    </div>
+                                    <div class="single_wrap" v-if="jobs[0].qualification">
+                                        <h4>Qualification</h4>
+                                        <p>{{ jobs[0].qualification }}</p>
+                                    </div>
+                                    <div class="single_wrap" v-if="jobs[0].benefits">
+                                        <h4>Benefits</h4>
+                                        <p>{{ jobs[0].benefits }}</p>
+                                    </div>
+                                    <div class="border-bottom"></div>
+                                    <div class="pt-3 text-end">
+                                        <Link
+                                            v-if="jobs[0].user_id.id !== ($page.props.auth.user ? $page.props.auth.user.id : true)"
+                                            :href="route('job.save', jobs[0].id)" method="POST">
+                                            <PrimaryButtonOutline>Save</PrimaryButtonOutline>
+                                        </Link>
+                                        <User
+                                            v-if="jobs.length && jobs[0].user_id.id === ($page.props.auth.user ? $page.props.auth.user.id : true)">
+                                            <Link :href="route('job.edit', jobs[0].id)">
+                                                <PrimaryButton>
+                                                    Edit Post
+                                                </PrimaryButton>
+                                            </Link>
+                                        </User>
+                                        <User v-else-if="$page.props.auth.user">
+                                            <Link :href="route('job.apply', jobs[0].id)" method="POST">
+                                                <PrimaryButton>
+                                                    Apply
+                                                </PrimaryButton>
+                                            </Link>
+                                        </User>
+                                        <User v-else>
+                                            <Link :href="route('login')">
+                                                <PrimaryButton>
+                                                    Login to Apply
+                                                </PrimaryButton>
+                                            </Link>
+                                        </User>
+
                                     </div>
                                 </div>
                             </div>
-                            <div class="descript_wrap white-bg">
-                                <div class="single_wrap">
-                                    <h4>Job description</h4>
-                                    <p>{{ jobs[0].description }}</p>
-                                </div>
-                                <div class="single_wrap" v-if="jobs[0].responsibility">
-                                    <h4>Responsibility</h4>
-                                    <p>{{ jobs[0].responsibility }}</p>
-                                </div>
-                                <div class="single_wrap" v-if="jobs[0].qualification">
-                                    <h4>Qualification</h4>
-                                    <p>{{ jobs[0].qualification }}</p>
-                                </div>
-                                <div class="single_wrap" v-if="jobs[0].benefits">
-                                    <h4>Benefits</h4>
-                                    <p>{{ jobs[0].benefits }}</p>
-                                </div>
-                                <div class="border-bottom"></div>
-                                <div class="pt-3 text-end">
-                                    <Link v-if="jobs[0].user_id.id !== ($page.props.auth.user ? $page.props.auth.user.id : true)" :href="route('job.save', jobs[0].id)" method="POST">
-                                        <PrimaryButtonOutline>Save</PrimaryButtonOutline>
-                                    </Link>
-                                    <User
-                                        v-if="jobs.length && jobs[0].user_id.id === ($page.props.auth.user ? $page.props.auth.user.id : true)">
-                                        <Link :href="route('job.edit', jobs[0].id)">
-                                            <PrimaryButton>
-                                                Edit Post
-                                            </PrimaryButton>
-                                        </Link>
-                                    </User>
-                                    <User v-else-if="$page.props.auth.user">
-                                        <Link :href="route('job.apply', jobs[0].id)" method="POST">
-                                            <PrimaryButton>
-                                                Apply
-                                            </PrimaryButton>
-                                        </Link>
-                                    </User>
-                                    <User v-else>
-                                        <Link :href="route('login')">
-                                            <PrimaryButton>
-                                                Login to Apply
-                                            </PrimaryButton>
-                                        </Link>
-                                    </User>
+                        </div>
 
+                        <div class="col-md-12 mt-4" v-if="jobs.length && jobs[0].user_id.id === ($page.props.auth.user ? $page.props.auth.user.id : true)">
+                            <div class="card shadow border-0">
+                                <div class="job_details_header">
+                                    <div class="single_jobs single_jobs-custom white-bg d-flex justify-content-between">
+                                        <div class="single_wrap">
+                                            <h4>Applicants</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="descript_wrap white-bg">
+                                    <table class="table table-striped">
+                                        <thead v-if="users.length > 0">
+                                        <tr>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Email</th>
+                                            <th scope="col">Mobile</th>
+                                            <th scope="col">Applied Date</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-if="users.length > 0" v-for="user in users">
+                                            <td>{{ user.user.name }}</td>
+                                            <td>{{ user.user.email }}</td>
+                                            <td>{{ user.user.mobile }}</td>
+                                            <td>{{ user.applied_date }}</td>
+                                        </tr>
+                                        <tr v-else style="text-align: center">
+                                            No Applicants
+                                        </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-4">
                         <div class="card shadow border-0">
                             <div class="job_sumary">
@@ -156,16 +198,24 @@ defineProps({
                     </div>
                 </div>
             </div>
+
         </section>
     </Main>
 </template>
 
 
-
 <style scoped>
 
-.saved-heart .heart_mark{
+.saved-heart .heart_mark {
     background-color: #00D363 !important;
     color: white !important;
+}
+
+.single_wrap h4 {
+    font-size: 19px;
+}
+
+.single_jobs-custom {
+    padding-bottom: 5px !important;
 }
 </style>
