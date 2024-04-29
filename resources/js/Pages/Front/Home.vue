@@ -140,7 +140,7 @@ function jobSearch() {
                 <div class="row pt-5">
                     <div class="col-lg-4 col-xl-3 col-md-6" v-for="category in categories">
                         <div class="single_catagory">
-                            <a href="jobs.html"><h4 class="pb-2">{{category.name}}</h4></a>
+                            <Link><h4 class="pb-2">{{category.name}}</h4></Link>
                             <p class="mb-0"> <span>50</span> Available position</p>
                         </div>
                     </div>
@@ -236,7 +236,6 @@ function jobSearch() {
     }
 
     .truncate-text{
-        width: 350px;
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;

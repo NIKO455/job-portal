@@ -119,7 +119,6 @@ function sortJob(event) {
 
 <style scoped>
 .truncate-text {
-    width: 250px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
